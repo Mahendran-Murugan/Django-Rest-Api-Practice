@@ -5,6 +5,7 @@ from rest_framework.response import Response
 from django.db.models import Q
 from .models import Advocate, TestSentiment
 from .serializers import AdvocateSerializer, TestSentimentSerializer
+from .sentiment import getAnalysis
 
 @api_view(['GET'])
 def endpoint(request):
