@@ -3,12 +3,12 @@ from django.http import JsonResponse
 from rest_framework.decorators import api_view, APIView
 from rest_framework.response import Response 
 from django.db.models import Q
-from .models import Advocate
-from .serializers import AdvocateSerializer
+from .models import Advocate, TestSentiment
+from .serializers import AdvocateSerializer, TestSentimentSerializer
 
 @api_view(['GET'])
 def endpoint(request):
-    data = ['/advocates', 'advocates/:username']
+    data = ['/advocates', 'advocates/:username', 'sentiment/']
     return Response(data)
 
 @api_view(['GET','POST'])
@@ -28,7 +28,28 @@ def advocate_list(request):
         )
         serializer = AdvocateSerializer(advocate, many = False)
         return Response(serializer.data)
+  
+  
+@api_view(['POST', 'GET'])
+def sentiment_list(request):
+    if request.method == 'POST':
+        review = request.data['review']
+        sentiment = getAnalysis(review)
+        print("The sentiment is",sentiment)
+        sentiment = TestSentiment.objects.create(
+            review = review,
+            sentiment = str(sentiment),
+        )
+        serializer = TestSentimentSerializer(sentiment, many = False)
+        return Response(serializer.data)
     
+    if request.method == 'GET':
+        sentiment = TestSentiment.objects.all()
+        serializer = TestSentimentSerializer(sentiment, many = True)
+        return Response(serializer.data)    
+
+    
+  
 class AdvocateDetail(APIView):
     
     def get_object(self, username):
@@ -73,3 +94,5 @@ class AdvocateDetail(APIView):
 #     if request.method == 'DELETE':
 #         advocate.delete()
 #         return Response('User Deleted')
+
+

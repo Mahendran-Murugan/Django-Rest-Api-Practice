@@ -7,3 +7,11 @@ class Advocate(models.Model):
     def __str__(self):
         return self.username
     
+    
+class TestSentiment(models.Model):
+    review = models.TextField(max_length = 500, null = True, blank = True)
+    sentiment = models.CharField(max_length=200)
+    
+    def __str__(self):
+        return self.review
+    
